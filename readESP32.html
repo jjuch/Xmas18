@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, intitial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="data:,">
     <style>
       body {
@@ -18,11 +18,11 @@
   </head>
   <body>
     <h1>ESP32 with Servo</h1>
-    <p>Position: <span id="ServoPos"></span></p>
+    <p>Position: <span id="servoPos"></span></p>
     <input type="range" min="0" max="180" class="slider" id="servoSlider" onchange="servo(this.value)"/>
 
     <script>
-      var slider = document.getElementById("ServoSlider");
+      var slider = document.getElementById("servoSlider");
       var servoP = document.getElementById("servoPos");
       servoP.innerHTML = slider.value;
       slider.oninput = function() {
@@ -31,8 +31,19 @@
       }
 
       $.ajaxSetup({timeout:1000});
+
       function servo(pos) {
-        $.get("/?value=" + pos + "&");
+        console.log("test: "+ pos);
+        $.ajax({
+          url: "/?value=" + pos + "&",
+          type: "get", //send it through get method
+          success: function(response) {
+            console.log("Succes: "+response);
+          },
+          error: function(xhr) {
+            console.log("Fail: "+xhr);
+          }
+          });
         {Connection:close};
       }
     </script>
