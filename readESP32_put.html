@@ -33,10 +33,13 @@
       $.ajaxSetup({timeout:1000});
 
       function servo(pos) {
-        console.log("test: "+ pos);
+        let position = {"pos": pos};
+        console.log(JSON.stringify(position));
         $.ajax({
-          url: "/?value=" + pos + "&",
-          type: "get", //send it through get method
+          url:"",
+          type: "put", //send it through get method
+          contentType: "application/json",
+          data: JSON.stringify(position),
           success: function(response) {
             console.log("Succes");
           },
