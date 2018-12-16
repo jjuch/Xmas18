@@ -1,27 +1,44 @@
 #include <WiFi.h>
 #include <Servo.h>
-#include <ESPAsyncWebServer.h>
+/*#include <ESPAsyncWebServer.h>*/
 
-Servo myservo; // create servo object to control a servo
-static const int servoPin = 13;
+Servo myservo1; // create servo object to control a servo
+Servo myservo2;
+
+static const int servoPin1 = 13;
+static const int servoPin2 = 12;
+
 
 // WiFi connections
-const char* ssid = "WiFi-2.4-E400";
-const char* password = "JasperJasmijnRonaldRaven";
+/*const char* ssid = "WiFi-2.4-E400";
+const char* password = "JasperJasmijnRonaldRaven";*/
+const char* ssid = "WiFi-2.4-E119";
+const char* password = "D67A41FB1A";
 
 WiFiServer server(80);
 
 String header; // variable to store the HTTP request
 
-String valueString = String(5); // decode HTTP GET value
+String valueString1 = String(90); // decode HTTP GET value
+String valueString2 = String(90); // decode HTTP GET value
 
 int pos1 = 0;
 int pos2 = 0;
+int pos3 = 0;
 
 void setup() {
   Serial.begin(115200); // start console
   
-  myservo.attach(servoPin); // attaches the servo on servoPin to the servo object
+  myservo1.attach(servoPin1); // attaches the servo on servoPin to the servo object
+  myservo2.attach(servoPin2);
+
+  /*myservo1.write(20);
+  myservo2.write(20);
+
+  delay(3000);*/
+
+  myservo1.write(90);
+  myservo2.write(90);
 
   // connect to WiFi network
   Serial.print("Connecting to ");
@@ -72,28 +89,42 @@ void loop() {
             client.println("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>");
 
             // web page
-            client.println("</head><body><h1>ESP32 with Servo</h1>");
-            client.println("<p>Position: <span id=\"servoPos>\"></span></p>");
-            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servoSlider\" onchange=\"servo(this.value)\" value=\""+valueString+"\"/>");
+            client.println("</head><body><h1>Krijg je het cadeautje open?</h1><h2>Vul de juiste combinatie in:</h2><h3>Slot 1</h3>");
+            client.println("<p>Position: <span id=\"servoPos1\"></span></p>");
+            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servoSlider1\" onchange=\"servo(this.value,1)\" value=\""+valueString1+"\"/>");
+            client.println("<h3>Slot 2</h3><p>Position: <span id=\"servoPos2\"></span></p>");
+            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servoSlider2\" onchange=\"servo(this.value,2)\" value=\""+valueString2+"\"/>");
 
-            client.println("<script>var slider = document.getElementById(\"servoSlider\");");
-            client.println("var servoP = document.getElementById(\"servoPos\"); servoP.innerHTML = slider.value;");
-            client.println("slider.oninput = function() { slider.value = this.value; servoP.innerHTML = this.value; }");
+            client.println("<script type =\"text/javascript\">var slider1 = document.getElementById(\"servoSlider1\");");
+            client.println("var slider2 = document.getElementById(\"servoSlider2\");");
+            client.println("var servoP1 = document.getElementById(\"servoPos1\"); servoP1.innertext = ''+slider1.value;");
+            client.println("var servoP2 = document.getElementById(\"servoPos2\"); servoP2.innertext = ''+slider2.value;");
+            
+            client.println("slider1.oninput = function() { slider1.value = this.value; servoP1.innerHTML = this.value; }");
+            client.println("slider2.oninput = function() { slider2.value = this.value; servoP2.innerHTML = this.value; }");
 
-            client.println("$.ajaxSetup({timeout:1000}); function servo(pos) { ");
-            client.println("$.get(\"/?value=\" + pos + \"&\"); {Connection: close};}</script>");
+            client.println("$.ajaxSetup({timeout:1000}); function servo(pos, sliderNr) {let pos1=0; let pos2=0; if (sliderNr ==1) {pos1=pos;pos2=slider2.value;} else {pos1=slider1.value; pos2=pos;};");
+            client.println("$.get(\"/?value=\" + pos1 + \"!\" + pos2 + \"&\"); {Connection: close};}</script>");
 
             client.println("</body></html>");
 
             if (header.indexOf("GET /?value=")>=0) { // header: // GET /?value=180& HTTP/1.1
               pos1 = header.indexOf('=');
-              pos2 = header.indexOf('&');
-              valueString = header.substring(pos1+1, pos2);
+              pos2 = header.indexOf('!');
+              pos3 = header.indexOf('&');
+              valueString1 = header.substring(pos1+1, pos2);
+              valueString2 = header.substring(pos2+1, pos3);
 
               // rotate servo
 
-              myservo.write(valueString.toInt());
-              Serial.println(valueString);
+              int val1 = (valueString1.toInt()-15) % 180;
+              val1=val1<0 ? val1+180 : val1;
+              int val2 = (valueString2.toInt()+45) % 180;
+              val2=val2<0 ? val2+180 : val2;
+              myservo1.write(val1);
+              myservo2.write(val2);
+              Serial.println(val1);
+              Serial.println(val2);
             }
 
             // the HTTP response ends with another blank line

@@ -6,8 +6,10 @@ Servo myservo; // create servo object to control a servo
 static const int servoPin = 13;
 
 // WiFi connections
-const char* ssid = "WiFi-2.4-E400";
-const char* password = "JasperJasmijnRonaldRaven";
+/*const char* ssid = "WiFi-2.4-E400";
+const char* password = "JasperJasmijnRonaldRaven";*/
+const char* ssid = "WiFi-2.4-E119";
+const char* password = "D67A41FB1A";
 
 void setup() {
   Serial.begin(115200); // start console
