@@ -37,8 +37,8 @@ void setup() {
 
   delay(3000);*/
 
-  myservo1.write(90);
-  myservo2.write(90);
+  myservo1.write(15);
+  myservo2.write(15);
 
   // connect to WiFi network
   Serial.print("Connecting to ");
@@ -66,6 +66,8 @@ void loop() {
 
     while (client.connected()) { // loop while client is connected
       if (client.available()) { // if there are bytes to read from the client
+        /*myservo1.write(90);
+        myservo2.write(90);*/
         char c = client.read();
         Serial.write(c);
         header += c;
@@ -117,14 +119,29 @@ void loop() {
 
               // rotate servo
 
-              int val1 = (valueString1.toInt()-15) % 180;
-              val1=val1<0 ? val1+180 : val1;
-              int val2 = (valueString2.toInt()+45) % 180;
-              val2=val2<0 ? val2+180 : val2;
-              myservo1.write(val1);
-              myservo2.write(val2);
+              int val1=valueString1.toInt();
+              int val2=valueString2.toInt();
+
               Serial.println(val1);
               Serial.println(val2);
+
+              if (val1 == 161) {
+                Serial.print("1 OK");
+                myservo1.write(15);
+              }
+              else {
+                Serial.print("1 NOK");
+                myservo1.write(90);
+              }
+              
+              if (val2 == 20) {
+                Serial.print("2 OK");
+                myservo2.write(15);
+              }
+              else {
+                Serial.print("2 NOK");
+                myservo2.write(90);
+              }
             }
 
             // the HTTP response ends with another blank line
