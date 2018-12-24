@@ -1,1 +1,2 @@
 # Xmas18
+The finalised code can be found in the folder'sevoSweep_wHTML_website'. A box is locked with two servo motors. A ESP32 is connected with the internet and hosts a HTML/JS/css website on its server. Two sliders can be adjusted to submit the right answers. Every change is posted through an ajax request. The ESP32 code then checks the answers and update the servo motors' position accordingly. Once both answers are correct the locks are opened. Now, the present can be removed from the secret box.
